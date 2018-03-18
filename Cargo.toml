@@ -1,0 +1,6 @@
+[package]
+name = "pcgbg"
+version = "0.1.0"
+authors = ["Arthur Eubanks <ayueubanks@gmail.com>"]
+
+[dependencies]
