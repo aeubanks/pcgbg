@@ -7,3 +7,4 @@ authors = ["Arthur Eubanks <ayueubanks@gmail.com>"]
 noise = "0.5.0"
 rgb = "0.8"
 lodepng = "2.0.0"
+clap = "2.31.2"
