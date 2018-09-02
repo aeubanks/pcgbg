@@ -2,6 +2,7 @@ extern crate clap;
 extern crate lodepng;
 extern crate noise;
 extern crate rgb;
+extern crate time;
 
 use rgb::*;
 use noise::{Fbm, MultiFractal, NoiseFn, Seedable, ScalePoint};
@@ -80,9 +81,10 @@ fn main() {
     let height = args.height;
     let scale = args.scale;
     let path = Path::new(&args.output_path);
-    let noise_r = create_noise(1, scale);
-    let noise_g = create_noise(2, scale);
-    let noise_b = create_noise(3, scale);
+    let seed = get_time_seed();
+    let noise_r = create_noise(seed ^ 0, scale);
+    let noise_g = create_noise(seed ^ 1, scale);
+    let noise_b = create_noise(seed ^ 2, scale);
     let mut buf = Vec::new();
     buf.resize(width * height, RGB8 { r: 0, g: 0, b: 0 });
     for j in 0..height {
@@ -108,4 +110,9 @@ fn create_noise(seed: u32, scale: f64) -> Noise {
 
 fn noise_output_to_u8(val: f64) -> u8 {
     (val * std::u8::MAX as f64) as u8
+}
+
+fn get_time_seed() -> u32 {
+    let time = time::get_time();
+    (time.sec as u32) ^ (time.nsec as u32)
 }
