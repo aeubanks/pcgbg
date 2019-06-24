@@ -1,4 +1,4 @@
-extern crate clap;
+extern crate structopt;
 extern crate lodepng;
 extern crate noise;
 extern crate rgb;
@@ -6,81 +6,26 @@ extern crate time;
 
 use rgb::*;
 use noise::{Fbm, MultiFractal, NoiseFn, Seedable, ScalePoint};
-use std::path::Path;
-use std::string::String;
-use clap::{App, Arg};
+use std::path::PathBuf;
+use structopt::StructOpt;
 
-struct ArgResult {
-    output_path: String,
+#[derive(StructOpt)]
+struct Opts {
+    #[structopt(help = "Path to write generated image", long, short, parse(from_os_str))]
+    output_path: PathBuf,
+    #[structopt(help = "Image width", long)]
     width: usize,
+    #[structopt(help = "Image height", long)]
     height: usize,
+    #[structopt(help = "Noise scale", long)]
     scale: f64,
 }
 
-fn parse_args() -> Result<ArgResult, String> {
-    let matches = App::new("pcgbg")
-        .arg(
-            Arg::with_name("scale")
-                .short("s")
-                .long("scale")
-                .value_name("SCALE")
-                .takes_value(true)
-                .help("Scale of noise"),
-        )
-        .arg(
-            Arg::with_name("width")
-                .short("w")
-                .long("width")
-                .value_name("WIDTH")
-                .takes_value(true)
-                .help("Width of image"),
-        )
-        .arg(
-            Arg::with_name("height")
-                .short("h")
-                .long("height")
-                .value_name("HEIGHT")
-                .takes_value(true)
-                .help("Height of image"),
-        )
-        .arg(
-            Arg::with_name("output")
-                .short("o")
-                .long("output")
-                .value_name("FILE")
-                .takes_value(true)
-                .help("Name of file to output"),
-        )
-        .get_matches();
-    let width = if let Some(width_str) = matches.value_of("width") {
-        width_str.parse::<usize>().map_err(|e| e.to_string())?
-    } else {
-        500
-    };
-    let height = if let Some(height_str) = matches.value_of("height") {
-        height_str.parse::<usize>().map_err(|e| e.to_string())?
-    } else {
-        500
-    };
-    let scale = if let Some(height_str) = matches.value_of("scale") {
-        height_str.parse::<f64>().map_err(|e| e.to_string())?
-    } else {
-        0.005
-    };
-    Ok(ArgResult {
-        output_path: matches.value_of("output").map(|s| s.to_owned()).unwrap_or("out.png".to_owned()),
-        width,
-        height,
-        scale,
-    })
-}
-
 fn main() {
-    let args = parse_args().unwrap();
-    let width = args.width;
-    let height = args.height;
-    let scale = args.scale;
-    let path = Path::new(&args.output_path);
+    let opts = Opts::from_args();
+    let width = opts.width;
+    let height = opts.height;
+    let scale = opts.scale;
     let seed = get_time_seed();
     let noise_r = create_noise(seed ^ 0, scale);
     let noise_g = create_noise(seed ^ 1, scale);
@@ -98,7 +43,7 @@ fn main() {
             pixel.b = noise_output_to_u8(noise_b.get([x, y]));
         }
     }
-    lodepng::encode_file(&path, &buf, width, height, lodepng::ColorType::RGB, 8).unwrap();
+    lodepng::encode_file(opts.output_path.as_path(), &buf, width, height, lodepng::ColorType::RGB, 8).unwrap();
 }
 
 type Noise = ScalePoint<Fbm>;
