@@ -1,9 +1,0 @@
-combine_control_expr = false
-empty_item_single_line = true
-reorder_imported_names = true
-reorder_imports = true
-reorder_imports_in_group = true
-reorder_extern_crates = true
-reorder_extern_crates_in_group = true
-reorder_modules = true
-remove_blank_lines_at_start_or_end_of_block = true

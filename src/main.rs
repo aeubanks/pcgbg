@@ -1,11 +1,16 @@
+use noise::{Fbm, MultiFractal, NoiseFn, ScalePoint, Seedable};
 use rgb::*;
-use noise::{Fbm, MultiFractal, NoiseFn, Seedable, ScalePoint};
 use std::path::PathBuf;
 use structopt::StructOpt;
 
 #[derive(StructOpt)]
 struct Opts {
-    #[structopt(help = "Path to write generated image", long, short, parse(from_os_str))]
+    #[structopt(
+        help = "Path to write generated image",
+        long,
+        short,
+        parse(from_os_str)
+    )]
     output_path: PathBuf,
     #[structopt(help = "Image width", long)]
     width: usize,
@@ -37,7 +42,15 @@ fn main() {
             pixel.b = noise_output_to_u8(noise_b.get([x, y]));
         }
     }
-    lodepng::encode_file(opts.output_path.as_path(), &buf, width, height, lodepng::ColorType::RGB, 8).unwrap();
+    lodepng::encode_file(
+        opts.output_path.as_path(),
+        &buf,
+        width,
+        height,
+        lodepng::ColorType::RGB,
+        8,
+    )
+    .unwrap();
 }
 
 type Noise = ScalePoint<Fbm>;
