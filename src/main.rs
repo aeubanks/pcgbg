@@ -65,6 +65,9 @@ fn noise_output_to_u8(val: f64) -> u8 {
 }
 
 fn get_time_seed() -> u32 {
-    let time = time::get_time();
-    (time.sec as u32) ^ (time.nsec as u32)
+    let start = std::time::SystemTime::now();
+    let since_the_epoch = start
+        .duration_since(std::time::UNIX_EPOCH)
+        .expect("Time went backwards");
+    since_the_epoch.as_nanos() as u32
 }
