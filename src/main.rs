@@ -1,9 +1,3 @@
-extern crate structopt;
-extern crate lodepng;
-extern crate noise;
-extern crate rgb;
-extern crate time;
-
 use rgb::*;
 use noise::{Fbm, MultiFractal, NoiseFn, Seedable, ScalePoint};
 use std::path::PathBuf;
