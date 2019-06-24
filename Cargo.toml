@@ -6,8 +6,7 @@ edition = "2018"
 
 [dependencies]
 noise = "0.5.0"
-rgb = "0.8"
-lodepng = "2.0.0"
+image = "*"
 structopt = "0.2"
 
 [patch.crates-io]

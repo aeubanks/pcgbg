@@ -1,5 +1,4 @@
 use noise::{Fbm, MultiFractal, NoiseFn, ScalePoint, Seedable};
-use rgb::*;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -13,9 +12,9 @@ struct Opts {
     )]
     output_path: PathBuf,
     #[structopt(help = "Image width", long)]
-    width: usize,
+    width: u32,
     #[structopt(help = "Image height", long)]
-    height: usize,
+    height: u32,
     #[structopt(help = "Noise scale", long)]
     scale: f64,
 }
@@ -29,28 +28,16 @@ fn main() {
     let noise_r = create_noise(seed ^ 0, scale);
     let noise_g = create_noise(seed ^ 1, scale);
     let noise_b = create_noise(seed ^ 2, scale);
-    let mut buf = Vec::new();
-    buf.resize(width * height, RGB8 { r: 0, g: 0, b: 0 });
-    for j in 0..height {
-        for i in 0..width {
-            let x = i as f64;
-            let y = j as f64;
+    let image = image::ImageBuffer::from_fn(width, height, |i, j| {
+        let x = i as f64;
+        let y = j as f64;
 
-            let mut pixel = &mut buf[i + j * width];
-            pixel.r = noise_output_to_u8(noise_r.get([x, y]));
-            pixel.g = noise_output_to_u8(noise_g.get([x, y]));
-            pixel.b = noise_output_to_u8(noise_b.get([x, y]));
-        }
-    }
-    lodepng::encode_file(
-        opts.output_path.as_path(),
-        &buf,
-        width,
-        height,
-        lodepng::ColorType::RGB,
-        8,
-    )
-    .unwrap();
+        let r = noise_output_to_u8(noise_r.get([x, y]));
+        let g = noise_output_to_u8(noise_g.get([x, y]));
+        let b = noise_output_to_u8(noise_b.get([x, y]));
+        image::Rgb([r, g, b])
+    });
+    image.save(opts.output_path).unwrap();
 }
 
 type Noise = ScalePoint<Fbm>;
