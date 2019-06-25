@@ -2,6 +2,8 @@ use noise::{Fbm, MultiFractal, NoiseFn, ScalePoint, Seedable};
 use std::path::PathBuf;
 use structopt::StructOpt;
 
+mod dist;
+
 #[derive(StructOpt)]
 struct Opts {
     #[structopt(
