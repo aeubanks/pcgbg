@@ -29,6 +29,8 @@ struct Opts {
     height: usize,
     #[structopt(help = "Noise scale", long)]
     scale: f64,
+    #[structopt(help = "Seed for RNG", long)]
+    seed: Option<u64>,
 }
 
 fn main() {
@@ -37,8 +39,7 @@ fn main() {
     let height = opts.height;
     let scale = opts.scale;
 
-    let seed = get_time_seed();
-    let mut rng = SmallRng::seed_from_u64(seed as u64);
+    let mut rng = SmallRng::seed_from_u64(opts.seed.unwrap_or_else(|| get_time_seed() as u64));
 
     let noise_distribution = NoiseDistribution { scale };
     let noise_r = noise_distribution.sample(&mut rng);
