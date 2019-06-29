@@ -1,12 +1,16 @@
-mod dist;
+mod pcgbg_dist;
+mod pcgbg_noise;
 
 #[cfg(test)]
 use approx::assert_relative_eq;
-use dist::{DistanceEntry, Vec2D};
+use image::ImageBuffer;
 use ndarray::Array2;
-use noise::{Fbm, MultiFractal, NoiseFn, ScalePoint, Seedable};
+use noise::NoiseFn;
+use pcgbg_dist::{DistanceEntry, DistanceEntryDistribution, Vec2D};
+use pcgbg_noise::{Noise, NoiseDistribution};
+use rand::distributions::Distribution;
 use rand::rngs::SmallRng;
-use rand::{Rng, SeedableRng};
+use rand::SeedableRng;
 use std::path::PathBuf;
 use structopt::StructOpt;
 
@@ -32,14 +36,19 @@ fn main() {
     let width = opts.width;
     let height = opts.height;
     let scale = opts.scale;
+
     let seed = get_time_seed();
-    let mut rand = SmallRng::seed_from_u64(seed as u64);
-    let noise_r = create_noise(seed ^ 0, scale);
-    let noise_g = create_noise(seed ^ 1, scale);
-    let noise_b = create_noise(seed ^ 2, scale);
-    let dist_entry_r = create_distance_entry(width, height, &mut rand);
-    let dist_entry_g = create_distance_entry(width, height, &mut rand);
-    let dist_entry_b = create_distance_entry(width, height, &mut rand);
+    let mut rng = SmallRng::seed_from_u64(seed as u64);
+
+    let noise_distribution = NoiseDistribution { scale };
+    let noise_r = noise_distribution.sample(&mut rng);
+    let noise_g = noise_distribution.sample(&mut rng);
+    let noise_b = noise_distribution.sample(&mut rng);
+
+    let dist_entry_distribution = DistanceEntryDistribution { width, height };
+    let dist_entry_r = dist_entry_distribution.sample(&mut rng);
+    let dist_entry_g = dist_entry_distribution.sample(&mut rng);
+    let dist_entry_b = dist_entry_distribution.sample(&mut rng);
 
     let mut vals_r = Array2::<f64>::zeros((width, height));
     let mut vals_g = Array2::<f64>::zeros((width, height));
@@ -57,7 +66,7 @@ fn main() {
     normalize(&mut vals_g);
     normalize(&mut vals_b);
 
-    let image = image::ImageBuffer::from_fn(width as u32, height as u32, |i, j| {
+    let image = ImageBuffer::from_fn(width as u32, height as u32, |i, j| {
         let x = i as usize;
         let y = j as usize;
 
@@ -67,19 +76,6 @@ fn main() {
         image::Rgb([r, g, b])
     });
     image.save(opts.output_path).unwrap();
-}
-
-fn create_distance_entry(width: usize, height: usize, rand: &mut SmallRng) -> DistanceEntry {
-    DistanceEntry::new(
-        rand.gen(),
-        Vec2D::new(width as f64, height as f64),
-        Vec2D::new(
-            rand.gen_range(0.0, width as f64),
-            rand.gen_range(0.0, height as f64),
-        ),
-        rand.gen(),
-        rand.gen(),
-    )
 }
 
 fn normalized<F: num_traits::Float>(val: F, min: F, max: F) -> F {
@@ -116,13 +112,6 @@ fn fill_with_distance_entry(vals: &mut Array2<f64>, dist_entry: &DistanceEntry) 
         let dist = dist_entry.distance(Vec2D::new(idx.0 as f64, idx.1 as f64));
         *val += normalized(dist, min, max);
     }
-}
-
-type Noise = ScalePoint<Fbm>;
-
-fn create_noise(seed: u128, scale: f64) -> Noise {
-    let fbm = Fbm::new().set_seed(seed as u32).set_persistence(0.25);
-    ScalePoint::new(fbm).set_x_scale(scale).set_y_scale(scale)
 }
 
 fn add_noise(vals: &mut Array2<f64>, noise: &Noise) {

@@ -1,6 +1,8 @@
 #[cfg(test)]
 use approx::assert_relative_eq;
 use noisy_float::prelude::*;
+use rand::distributions::Distribution;
+use rand::Rng;
 
 pub type Vec2D = euclid::Vector2D<f64>;
 
@@ -31,6 +33,26 @@ pub struct DistanceEntry {
     center: Vec2D,
     wrap: bool,
     reverse_distance: bool,
+}
+
+pub struct DistanceEntryDistribution {
+    pub width: usize,
+    pub height: usize,
+}
+
+impl Distribution<DistanceEntry> for DistanceEntryDistribution {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> DistanceEntry {
+        DistanceEntry::new(
+            rng.gen(),
+            Vec2D::new(self.width as f64, self.height as f64),
+            Vec2D::new(
+                rng.gen_range(0.0, self.width as f64),
+                rng.gen_range(0.0, self.height as f64),
+            ),
+            rng.gen(),
+            rng.gen(),
+        )
+    }
 }
 
 impl DistanceEntry {
