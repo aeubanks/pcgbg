@@ -1,3 +1,4 @@
+use approx::assert_relative_eq;
 use noisy_float::prelude::*;
 
 pub type Vec2D = euclid::Vector2D<f64>;
@@ -76,13 +77,9 @@ impl DistanceEntry {
     }
 }
 
-fn approx_eq(a: f64, b: f64) -> bool {
-    r64((a - b).abs()) < r64(0.00000001)
-}
-
 #[test]
 fn test_dist_entry() {
-    assert!(approx_eq(
+    assert_relative_eq!(
         DistanceEntry::new(
             DistanceType::Manhattan,
             Vec2D::new(7.0, 8.0),
@@ -92,8 +89,8 @@ fn test_dist_entry() {
         )
         .distance(Vec2D::new(3.0, 3.0)),
         5.0
-    ));
-    assert!(approx_eq(
+    );
+    assert_relative_eq!(
         DistanceEntry::new(
             DistanceType::Manhattan,
             Vec2D::new(7.0, 8.0),
@@ -103,8 +100,8 @@ fn test_dist_entry() {
         )
         .distance(Vec2D::new(6.0, 7.0)),
         3.0
-    ));
-    assert!(approx_eq(
+    );
+    assert_relative_eq!(
         DistanceEntry::new(
             DistanceType::Manhattan,
             Vec2D::new(4.0, 2.0),
@@ -114,5 +111,5 @@ fn test_dist_entry() {
         )
         .distance(Vec2D::new(0.0, 1.0)),
         1.0
-    ));
+    );
 }
