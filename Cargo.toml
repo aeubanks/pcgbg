@@ -8,7 +8,9 @@ edition = "2018"
 approx = "*"
 euclid = "*"
 noise = "0.5.0"
+num-traits = "*"
 structopt = "0.2"
+ndarray = "*"
 noisy_float = "*"
 
 [dependencies.image]

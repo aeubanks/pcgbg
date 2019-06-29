@@ -1,3 +1,4 @@
+#[cfg(test)]
 use approx::assert_relative_eq;
 use noisy_float::prelude::*;
 
@@ -58,7 +59,7 @@ impl DistanceEntry {
         }
     }
 
-    fn distance(&self, v: Vec2D) -> f64 {
+    pub fn distance(&self, v: Vec2D) -> f64 {
         let mut delta = (v - self.center).abs();
         if self.wrap {
             delta = delta.min((v - self.size - self.center).abs());
@@ -70,10 +71,6 @@ impl DistanceEntry {
         } else {
             dist
         }
-    }
-
-    pub fn scaled_distance(&self, v: Vec2D) -> f64 {
-        self.distance(v) / self.max_distance
     }
 }
 
