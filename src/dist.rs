@@ -1,6 +1,6 @@
 use noisy_float::prelude::*;
 
-type Vec2D = euclid::Vector2D<f64>;
+pub type Vec2D = euclid::Vector2D<f64>;
 
 #[derive(Copy, Clone)]
 pub enum DistanceType {
@@ -11,7 +11,7 @@ pub enum DistanceType {
     MinXY,
 }
 
-pub fn distance(distance_type: DistanceType, v: Vec2D) -> f64 {
+fn distance(distance_type: DistanceType, v: Vec2D) -> f64 {
     let abs = v.abs();
     match distance_type {
         DistanceType::Manhattan => abs.x + abs.y,

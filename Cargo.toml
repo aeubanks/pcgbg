@@ -7,9 +7,17 @@ edition = "2018"
 [dependencies]
 euclid = "*"
 noise = "0.5.0"
-image = "*"
 structopt = "0.2"
 noisy_float = "*"
+
+[dependencies.image]
+version = "*"
+default-features = false
+features = ["png_codec"]
+
+[dependencies.rand]
+version = "0.7"
+features = ["small_rng"]
 
 [patch.crates-io]
 noise = { git = 'https://github.com/Razaekel/noise-rs', rev = '2b2217c2ce76fd6fe986844021e6bca96530d974' }
