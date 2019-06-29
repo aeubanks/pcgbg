@@ -71,7 +71,7 @@ fn main() {
 
 fn create_distance_entry(width: usize, height: usize, rand: &mut SmallRng) -> DistanceEntry {
     DistanceEntry::new(
-        dist::DistanceType::Manhattan,
+        rand.gen(),
         Vec2D::new(width as f64, height as f64),
         Vec2D::new(
             rand.gen_range(0.0, width as f64),
@@ -112,7 +112,7 @@ fn fill_with_distance_entry(vals: &mut Array2<f64>, dist_entry: &DistanceEntry) 
         max = max.max(dist);
     }
     assert!(min < max);
-    for (idx, mut val) in vals.indexed_iter_mut() {
+    for (idx, val) in vals.indexed_iter_mut() {
         let dist = dist_entry.distance(Vec2D::new(idx.0 as f64, idx.1 as f64));
         *val += normalized(dist, min, max);
     }
@@ -126,8 +126,8 @@ fn create_noise(seed: u128, scale: f64) -> Noise {
 }
 
 fn add_noise(vals: &mut Array2<f64>, noise: &Noise) {
-    for (idx, mut val) in vals.indexed_iter_mut() {
-        *val += noise.get([idx.0 as f64, idx.1 as f64]);
+    for (idx, val) in vals.indexed_iter_mut() {
+        *val += noise.get([idx.0 as f64, idx.1 as f64]) * 0.1;
     }
 }
 

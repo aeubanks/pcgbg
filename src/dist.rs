@@ -4,7 +4,7 @@ use noisy_float::prelude::*;
 
 pub type Vec2D = euclid::Vector2D<f64>;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, rand_derive::Rand)]
 pub enum DistanceType {
     Manhattan,
     Euclidean,
