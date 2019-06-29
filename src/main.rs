@@ -1,13 +1,11 @@
+mod pcgbg_buf;
 mod pcgbg_dist;
 mod pcgbg_noise;
 
-#[cfg(test)]
-use approx::assert_relative_eq;
 use image::RgbImage;
-use ndarray::Array2;
-use noise::NoiseFn;
-use pcgbg_dist::{DistanceEntry, DistanceEntryDistribution, Vec2D};
-use pcgbg_noise::{Noise, NoiseDistribution};
+use pcgbg_buf::Buf;
+use pcgbg_dist::DistanceEntryDistribution;
+use pcgbg_noise::NoiseDistribution;
 use rand::distributions::Distribution;
 use rand::rngs::SmallRng;
 use rand::SeedableRng;
@@ -51,78 +49,29 @@ fn main() {
     let dist_entry_g = dist_entry_distribution.sample(&mut rng);
     let dist_entry_b = dist_entry_distribution.sample(&mut rng);
 
-    let mut vals_r = Array2::<f64>::zeros((width, height));
-    let mut vals_g = Array2::<f64>::zeros((width, height));
-    let mut vals_b = Array2::<f64>::zeros((width, height));
+    let mut buf = Buf::new(width, height);
+    buf.add(&noise_r, &[0.1, 0.0, 0.0]);
+    buf.add(&noise_g, &[0.0, 0.1, 0.0]);
+    buf.add(&noise_b, &[0.0, 0.0, 0.1]);
+    buf.add(&dist_entry_r, &[1.0, 0.0, 0.0]);
+    buf.add(&dist_entry_g, &[0.0, 1.0, 0.0]);
+    buf.add(&dist_entry_b, &[0.0, 0.0, 1.0]);
+    buf.normalize();
 
-    fill_with_distance_entry(&mut vals_r, &dist_entry_r);
-    fill_with_distance_entry(&mut vals_g, &dist_entry_g);
-    fill_with_distance_entry(&mut vals_b, &dist_entry_b);
-
-    add_noise(&mut vals_r, &noise_r);
-    add_noise(&mut vals_g, &noise_g);
-    add_noise(&mut vals_b, &noise_b);
-
-    normalize(&mut vals_r);
-    normalize(&mut vals_g);
-    normalize(&mut vals_b);
-
-    let image = vals_to_image(width, height, &vals_r, &vals_g, &vals_b);
+    let image = buf_to_image(&buf);
     image.save(opts.output_path).unwrap();
 }
 
-fn normalized<F: num_traits::Float>(val: F, min: F, max: F) -> F {
-    (val - min) / (max - min)
-}
-
-#[test]
-fn test_normalized() {
-    assert_relative_eq!(0.5, normalized(2.0, 1.0, 3.0));
-}
-
-fn normalize(vals: &mut Array2<f64>) {
-    let mut min = std::f64::MAX;
-    let mut max = std::f64::MIN;
-    for val in vals.iter() {
-        min = min.min(*val);
-        max = max.max(*val);
-    }
-    for val in vals.iter_mut() {
-        *val = normalized(*val, min, max);
-    }
-}
-
-fn vals_to_image(width: usize, height: usize, vals_r: &Array2<f64>, vals_g: &Array2<f64>, vals_b: &Array2<f64>) -> RgbImage {
-    RgbImage::from_fn(width as u32, height as u32, |i, j| {
+fn buf_to_image(buf: &Buf) -> RgbImage {
+    RgbImage::from_fn(buf.width as u32, buf.height as u32, |i, j| {
         let x = i as usize;
         let y = j as usize;
 
-        let r = scale_float_to_u8(vals_r[[x, y]]);
-        let g = scale_float_to_u8(vals_g[[x, y]]);
-        let b = scale_float_to_u8(vals_b[[x, y]]);
+        let r = scale_float_to_u8(buf.get(x, y, 0));
+        let g = scale_float_to_u8(buf.get(x, y, 1));
+        let b = scale_float_to_u8(buf.get(x, y, 2));
         image::Rgb([r, g, b])
     })
-}
-
-fn fill_with_distance_entry(vals: &mut Array2<f64>, dist_entry: &DistanceEntry) {
-    let mut min = std::f64::MAX;
-    let mut max = std::f64::MIN;
-    for (x, y) in ndarray::indices(vals.raw_dim()) {
-        let dist = dist_entry.distance(Vec2D::new(x as f64, y as f64));
-        min = min.min(dist);
-        max = max.max(dist);
-    }
-    assert!(min < max);
-    for (idx, val) in vals.indexed_iter_mut() {
-        let dist = dist_entry.distance(Vec2D::new(idx.0 as f64, idx.1 as f64));
-        *val += normalized(dist, min, max);
-    }
-}
-
-fn add_noise(vals: &mut Array2<f64>, noise: &Noise) {
-    for (idx, val) in vals.indexed_iter_mut() {
-        *val += noise.get([idx.0 as f64, idx.1 as f64]) * 0.1;
-    }
 }
 
 fn scale_float_to_u8(val: f64) -> u8 {

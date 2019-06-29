@@ -1,3 +1,4 @@
+use crate::pcgbg_buf::ValuePlane;
 #[cfg(test)]
 use approx::assert_relative_eq;
 use noisy_float::prelude::*;
@@ -93,6 +94,12 @@ impl DistanceEntry {
         } else {
             dist
         }
+    }
+}
+
+impl ValuePlane for DistanceEntry {
+    fn val(&self, x: f64, y: f64) -> f64 {
+        self.distance(Vec2D::new(x, y))
     }
 }
 
