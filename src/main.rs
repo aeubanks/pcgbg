@@ -3,7 +3,7 @@ mod pcgbg_noise;
 
 #[cfg(test)]
 use approx::assert_relative_eq;
-use image::ImageBuffer;
+use image::RgbImage;
 use ndarray::Array2;
 use noise::NoiseFn;
 use pcgbg_dist::{DistanceEntry, DistanceEntryDistribution, Vec2D};
@@ -67,15 +67,7 @@ fn main() {
     normalize(&mut vals_g);
     normalize(&mut vals_b);
 
-    let image = ImageBuffer::from_fn(width as u32, height as u32, |i, j| {
-        let x = i as usize;
-        let y = j as usize;
-
-        let r = scale_float_to_u8(vals_r[[x, y]]);
-        let g = scale_float_to_u8(vals_g[[x, y]]);
-        let b = scale_float_to_u8(vals_b[[x, y]]);
-        image::Rgb([r, g, b])
-    });
+    let image = vals_to_image(width, height, &vals_r, &vals_g, &vals_b);
     image.save(opts.output_path).unwrap();
 }
 
@@ -98,6 +90,18 @@ fn normalize(vals: &mut Array2<f64>) {
     for val in vals.iter_mut() {
         *val = normalized(*val, min, max);
     }
+}
+
+fn vals_to_image(width: usize, height: usize, vals_r: &Array2<f64>, vals_g: &Array2<f64>, vals_b: &Array2<f64>) -> RgbImage {
+    RgbImage::from_fn(width as u32, height as u32, |i, j| {
+        let x = i as usize;
+        let y = j as usize;
+
+        let r = scale_float_to_u8(vals_r[[x, y]]);
+        let g = scale_float_to_u8(vals_g[[x, y]]);
+        let b = scale_float_to_u8(vals_b[[x, y]]);
+        image::Rgb([r, g, b])
+    })
 }
 
 fn fill_with_distance_entry(vals: &mut Array2<f64>, dist_entry: &DistanceEntry) {
