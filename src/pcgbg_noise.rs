@@ -1,6 +1,5 @@
 use crate::pcgbg_buf::ValuePlane;
-use noise::NoiseFn;
-use noise::{Fbm, ScalePoint, Seedable};
+use noise::{Fbm, MultiFractal, NoiseFn, ScalePoint, Seedable};
 use rand::distributions::Distribution;
 use rand::Rng;
 
@@ -12,7 +11,7 @@ pub struct NoiseDistribution {
 
 impl Distribution<Noise> for NoiseDistribution {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Noise {
-        let fbm = Fbm::new().set_seed(rng.gen());
+        let fbm = Fbm::new().set_seed(rng.gen()).set_octaves(1);
         ScalePoint::new(fbm)
             .set_x_scale(self.scale)
             .set_y_scale(self.scale)
