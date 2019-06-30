@@ -25,7 +25,7 @@ struct Opts {
     width: usize,
     #[structopt(help = "Image height", long)]
     height: usize,
-    #[structopt(help = "Noise scale", long)]
+    #[structopt(help = "Noise scale", long, default_value = "0.001")]
     scale: f64,
     #[structopt(help = "Seed for RNG", long)]
     seed: Option<u64>,
