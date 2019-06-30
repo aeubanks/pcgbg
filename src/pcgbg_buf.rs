@@ -18,9 +18,9 @@ impl Buf {
         }
     }
 
-    pub fn add(&mut self, plane: &ValuePlane, color_scale: &[f64]) {
+    pub fn add(&mut self, plane: &ValuePlane, color_scales: &[f64]) {
         let num_colors = self.vals.raw_dim()[2];
-        assert_eq!(color_scale.len(), num_colors);
+        assert_eq!(color_scales.len(), num_colors);
         let mut min = std::f64::MAX;
         let mut max = std::f64::MIN;
         let plane_vals_dim = self.vals.raw_dim().remove_axis(Axis(2));
@@ -33,8 +33,8 @@ impl Buf {
         }
         for (i, j) in ndarray::indices(self.vals.raw_dim().remove_axis(Axis(2))) {
             let val = normalized(plane_vals[[i, j]], min, max);
-            for c in 0..num_colors {
-                self.vals[[i, j, c]] += val * color_scale[c];
+            for (c, color_scale) in color_scales.iter().enumerate() {
+                self.vals[[i, j, c]] += val * color_scale;
             }
         }
     }

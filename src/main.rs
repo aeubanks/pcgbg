@@ -80,7 +80,7 @@ fn buf_to_image(buf: &Buf) -> RgbImage {
 }
 
 fn scale_float_to_u8(val: f64) -> u8 {
-    (val * std::u8::MAX as f64) as u8
+    (val * f64::from(std::u8::MAX)) as u8
 }
 
 fn get_time_seed() -> u128 {
