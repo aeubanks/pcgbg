@@ -1,6 +1,6 @@
 #[cfg(test)]
 use approx::assert_relative_eq;
-use ndarray::{Array3, Axis, RemoveAxis};
+use ndarray::{Array2, Array3, Axis, RemoveAxis};
 
 pub struct Buf {
     pub width: usize,
@@ -23,13 +23,16 @@ impl Buf {
         assert_eq!(color_scale.len(), num_colors);
         let mut min = std::f64::MAX;
         let mut max = std::f64::MIN;
+        let plane_vals_dim = self.vals.raw_dim().remove_axis(Axis(2));
+        let mut plane_vals = Array2::<f64>::zeros(plane_vals_dim);
         for (i, j) in ndarray::indices(self.vals.raw_dim().remove_axis(Axis(2))) {
             let val = plane.val(i as f64, j as f64);
             min = min.min(val);
             max = max.max(val);
+            plane_vals[[i, j]] = val;
         }
         for (i, j) in ndarray::indices(self.vals.raw_dim().remove_axis(Axis(2))) {
-            let val = normalized(plane.val(i as f64, j as f64), min, max);
+            let val = normalized(plane_vals[[i, j]], min, max);
             for c in 0..num_colors {
                 self.vals[[i, j, c]] += val * color_scale[c];
             }
