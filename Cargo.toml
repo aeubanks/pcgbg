@@ -11,6 +11,7 @@ noise = "0.5.0"
 num-traits = "*"
 rand_derive = "0.5"
 structopt = "0.2"
+more-asserts = "0.2"
 ndarray = "*"
 noisy_float = "*"
 

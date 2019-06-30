@@ -3,6 +3,7 @@ mod pcgbg_dist;
 mod pcgbg_noise;
 
 use image::RgbImage;
+use more_asserts::assert_le;
 use pcgbg_buf::Buf;
 use pcgbg_dist::{DistanceEntry, DistanceEntryDistribution};
 use pcgbg_noise::NoiseDistribution;
@@ -89,4 +90,34 @@ fn get_time_seed() -> u128 {
         .duration_since(std::time::UNIX_EPOCH)
         .expect("Time went backwards");
     since_the_epoch.as_nanos()
+}
+
+#[test]
+fn integration_test() {
+    let width = 10;
+    let height = 10;
+    let scale = 0.5;
+    let mut rng = SmallRng::seed_from_u64(1);
+
+    let noise_distribution = NoiseDistribution { scale };
+    let noise = noise_distribution.sample(&mut rng);
+    let dist_entry_distribution = DistanceEntryDistribution { width, height };
+    let dist_entry = dist_entry_distribution.sample(&mut rng);
+
+    let mut buf = Buf::new(width, height);
+    buf.add(&noise, &[1.4, 0.1, 0.0]);
+    buf.add(&dist_entry, &[0.0, 0.1, 0.5]);
+    buf.normalize();
+
+    for y in 0..height {
+        for x in 0..width {
+            for c in 0..3 {
+                let val = buf.get(x, y, c);
+                assert_le!(0.0, val);
+                assert_le!(val, 1.0);
+            }
+        }
+    }
+
+    let _image = buf_to_image(&buf);
 }
