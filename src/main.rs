@@ -4,10 +4,11 @@ mod pcgbg_noise;
 
 use image::RgbImage;
 use pcgbg_buf::Buf;
-use pcgbg_dist::DistanceEntryDistribution;
+use pcgbg_dist::{DistanceEntry, DistanceEntryDistribution};
 use pcgbg_noise::NoiseDistribution;
 use rand::distributions::Distribution;
 use rand::rngs::SmallRng;
+use rand::Rng;
 use rand::SeedableRng;
 use std::path::PathBuf;
 use structopt::StructOpt;
@@ -44,18 +45,22 @@ fn main() {
     let noise_g = noise_distribution.sample(&mut rng);
     let noise_b = noise_distribution.sample(&mut rng);
 
+    let mut dist_entries = Vec::<DistanceEntry>::new();
     let dist_entry_distribution = DistanceEntryDistribution { width, height };
-    let dist_entry_r = dist_entry_distribution.sample(&mut rng);
-    let dist_entry_g = dist_entry_distribution.sample(&mut rng);
-    let dist_entry_b = dist_entry_distribution.sample(&mut rng);
+    for _ in 0..6 {
+        dist_entries.push(dist_entry_distribution.sample(&mut rng));
+    }
 
     let mut buf = Buf::new(width, height);
+    for (i, dist_entry) in dist_entries.iter_mut().enumerate() {
+        let mut color_ratios = vec![0.0; 3];
+        let idx = i % color_ratios.len();
+        color_ratios[idx] = rng.gen_range(0.1, 1.0);
+        buf.add(dist_entry, &color_ratios);
+    }
     buf.add(&noise_r, &[0.1, 0.0, 0.0]);
     buf.add(&noise_g, &[0.0, 0.1, 0.0]);
     buf.add(&noise_b, &[0.0, 0.0, 0.1]);
-    buf.add(&dist_entry_r, &[1.0, 0.0, 0.0]);
-    buf.add(&dist_entry_g, &[0.0, 1.0, 0.0]);
-    buf.add(&dist_entry_b, &[0.0, 0.0, 1.0]);
     buf.normalize();
 
     let image = buf_to_image(&buf);
