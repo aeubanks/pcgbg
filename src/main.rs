@@ -40,7 +40,10 @@ fn main() {
     let height = opts.height;
     let scale = opts.scale;
 
-    let mut rng = SmallRng::seed_from_u64(opts.seed.unwrap_or_else(|| get_time_seed() as u64));
+    let mut rng = SmallRng::seed_from_u64(
+        opts.seed
+            .unwrap_or_else(|| rand::thread_rng().gen()),
+    );
 
     let noise_distribution = NoiseDistribution { scale };
     let noise_r = noise_distribution.sample(&mut rng);
@@ -83,14 +86,6 @@ fn buf_to_image(buf: &Buf) -> RgbImage {
 
 fn scale_float_to_u8(val: f64) -> u8 {
     (val * f64::from(std::u8::MAX)) as u8
-}
-
-fn get_time_seed() -> u128 {
-    let start = std::time::SystemTime::now();
-    let since_the_epoch = start
-        .duration_since(std::time::UNIX_EPOCH)
-        .expect("Time went backwards");
-    since_the_epoch.as_nanos()
 }
 
 #[test]
