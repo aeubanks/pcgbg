@@ -3,6 +3,7 @@ mod pcgbg_dist;
 mod pcgbg_noise;
 
 use image::RgbImage;
+#[cfg(test)]
 use more_asserts::assert_le;
 use pcgbg_buf::Buf;
 use pcgbg_dist::{DistanceEntry, DistanceEntryDistribution};
