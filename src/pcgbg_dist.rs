@@ -30,7 +30,6 @@ fn distance(distance_type: DistanceType, v: Vec2D) -> f64 {
 pub struct DistanceEntry {
     distance_type: DistanceType,
     size: Vec2D,
-    max_distance: f64,
     center: Vec2D,
     wrap: bool,
     reverse_distance: bool,
@@ -64,18 +63,9 @@ impl DistanceEntry {
         wrap: bool,
         reverse_distance: bool,
     ) -> Self {
-        let max_distance = distance(
-            distance_type,
-            if wrap {
-                size / 2.0
-            } else {
-                center.max(size - center)
-            },
-        );
         Self {
             distance_type,
             size,
-            max_distance,
             center,
             wrap,
             reverse_distance,
@@ -90,7 +80,7 @@ impl DistanceEntry {
         }
         let dist = distance(self.distance_type, delta);
         if self.reverse_distance {
-            self.max_distance - dist
+            -dist
         } else {
             dist
         }
@@ -136,6 +126,6 @@ fn test_dist_entry() {
             true,
         )
         .distance(Vec2D::new(0.0, 1.0)),
-        1.0
+        -2.0
     );
 }
