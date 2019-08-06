@@ -9,7 +9,7 @@ use rand::SeedableRng;
 fn bench(c: &mut Criterion) {
     c.bench_function("noise and dist_entry", |b| {
         b.iter(|| {
-            let size = black_box(10);
+            let size = black_box(100);
             let scale = 0.5;
             let mut rng = SmallRng::seed_from_u64(1);
 
