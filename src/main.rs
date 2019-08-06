@@ -40,10 +40,7 @@ fn main() {
     let height = opts.height;
     let scale = opts.scale;
 
-    let mut rng = SmallRng::seed_from_u64(
-        opts.seed
-            .unwrap_or_else(|| rand::thread_rng().gen()),
-    );
+    let mut rng = SmallRng::seed_from_u64(opts.seed.unwrap_or_else(|| rand::thread_rng().gen()));
 
     let noise_distribution = NoiseDistribution { scale };
     let noise_r = noise_distribution.sample(&mut rng);
