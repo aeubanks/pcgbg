@@ -15,6 +15,9 @@ more-asserts = "0.2"
 ndarray = "*"
 noisy_float = "*"
 
+[dev-dependencies]
+criterion = "0.2"
+
 [dependencies.image]
 version = "*"
 default-features = false
@@ -26,3 +29,8 @@ features = ["small_rng"]
 
 [patch.crates-io]
 noise = { git = 'https://github.com/Razaekel/noise-rs', rev = '2b2217c2ce76fd6fe986844021e6bca96530d974' }
+
+[[bench]]
+name = "bench"
+harness = false
+
