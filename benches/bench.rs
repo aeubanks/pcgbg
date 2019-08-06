@@ -27,7 +27,7 @@ fn iter(size: usize) -> Buf {
 }
 
 fn bench(c: &mut Criterion) {
-    c.bench_function("noise and dist_entry", |b| b.iter(|| iter(100)));
+    c.bench_function("noise and dist_entry basic", |b| b.iter(|| iter(100)));
 }
 
 fn inputs(c: &mut Criterion) {
