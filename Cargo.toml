@@ -30,7 +30,13 @@ features = ["small_rng"]
 [patch.crates-io]
 noise = { git = 'https://github.com/Razaekel/noise-rs', rev = '2b2217c2ce76fd6fe986844021e6bca96530d974' }
 
+[[bin]]
+name = "pcgbg"
+bench = false
+
+[lib]
+bench = false
+
 [[bench]]
 name = "bench"
 harness = false
-
