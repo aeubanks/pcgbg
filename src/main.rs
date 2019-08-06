@@ -1,13 +1,9 @@
-mod pcgbg_buf;
-mod pcgbg_dist;
-mod pcgbg_noise;
-
 use image::RgbImage;
 #[cfg(test)]
 use more_asserts::assert_le;
-use pcgbg_buf::Buf;
-use pcgbg_dist::{DistanceEntry, DistanceEntryDistribution};
-use pcgbg_noise::NoiseDistribution;
+use pcgbg::pcgbg_buf::Buf;
+use pcgbg::pcgbg_dist::{DistanceEntry, DistanceEntryDistribution};
+use pcgbg::pcgbg_noise::NoiseDistribution;
 use rand::distributions::Distribution;
 use rand::rngs::SmallRng;
 use rand::Rng;
