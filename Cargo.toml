@@ -5,21 +5,21 @@ authors = ["Arthur Eubanks <ayueubanks@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-approx = "*"
+approx = "0.3"
 euclid = "0.19"
-noise = "0.5.0"
-num-traits = "*"
+noise = "0.5.1"
+num-traits = "0.2"
 rand_derive = "0.5"
 structopt = "0.2"
 more-asserts = "0.2"
-ndarray = "*"
-noisy_float = "*"
+ndarray = "0.12"
+noisy_float = "0.1"
 
 [dev-dependencies]
 criterion = "0.2"
 
 [dependencies.image]
-version = "*"
+version = "0.22"
 default-features = false
 features = ["png_codec"]
 
