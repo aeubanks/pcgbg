@@ -16,7 +16,7 @@ ndarray = "0.12"
 noisy_float = "0.1"
 
 [dev-dependencies]
-criterion = "0.2"
+criterion = "0.3"
 
 [dependencies.image]
 version = "0.22"
