@@ -18,7 +18,7 @@ impl Buf {
         }
     }
 
-    pub fn add(&mut self, plane: &dyn ValuePlane, color_scales: &[f64]) {
+    pub fn add<V: ValuePlane>(&mut self, plane: &V, color_scales: &[f64]) {
         let num_colors = self.vals.raw_dim()[2];
         assert_eq!(color_scales.len(), num_colors);
         let mut min = std::f64::MAX;
