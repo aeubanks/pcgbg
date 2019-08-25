@@ -1,4 +1,0 @@
-^target/
-^.idea/
-^perf.data
-glob:*.rs.bk
