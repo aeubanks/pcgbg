@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 approx = "0.3"
 euclid = "0.19"
-noise = "*"
+noise = "0.6"
 num-traits = "0.2"
 rand_derive = "0.5"
 structopt = "0.2"
@@ -26,9 +26,6 @@ features = ["png_codec"]
 [dependencies.rand]
 version = "0.7"
 features = ["small_rng"]
-
-[patch.crates-io]
-noise = { git = 'https://github.com/Razaekel/noise-rs', rev = 'd006c6da7b437ae811863349dbf1c631ad18b935' }
 
 [[bin]]
 name = "pcgbg"
