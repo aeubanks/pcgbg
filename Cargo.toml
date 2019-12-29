@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 approx = "0.3"
 euclid = "0.19"
-noise = "0.6"
+noise = { version = "0.6", default-features = false }
 num-traits = "0.2"
 rand_derive = "0.5"
 structopt = "0.2"
