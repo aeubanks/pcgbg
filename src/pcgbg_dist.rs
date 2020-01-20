@@ -5,7 +5,7 @@ use noisy_float::prelude::*;
 use rand::distributions::Distribution;
 use rand::Rng;
 
-pub type Vec2D = euclid::Vector2D<f64>;
+pub type Vec2D = euclid::default::Vector2D<f64>;
 
 #[derive(Copy, Clone, rand_derive::Rand)]
 pub enum DistanceType {
