@@ -5,26 +5,26 @@ authors = ["Arthur Eubanks <ayueubanks@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-approx = "0.3"
-euclid = "0.20"
+approx = "*"
+euclid = "*"
 noise = { version = "0.6", default-features = false }
-num-traits = "0.2"
-rand_derive = "0.5"
-structopt = "0.2"
-more-asserts = "0.2"
-ndarray = "0.13"
-noisy_float = "0.1"
+num-traits = "*"
+rand_derive = "*"
+structopt = "*"
+more-asserts = "*"
+ndarray = "*"
+noisy_float = "*"
 
 [dev-dependencies]
-criterion = "0.3"
+criterion = "*"
 
 [dependencies.image]
-version = "0.22"
+version = "*"
 default-features = false
 features = ["png_codec"]
 
 [dependencies.rand]
-version = "0.7"
+version = "*"
 features = ["small_rng"]
 
 [[bin]]
