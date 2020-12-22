@@ -2,18 +2,30 @@ use crate::pcgbg_buf::ValuePlane;
 #[cfg(test)]
 use approx::assert_relative_eq;
 use noisy_float::prelude::*;
-use rand::distributions::Distribution;
+use rand::distributions::{Distribution, Standard};
 use rand::Rng;
 
 pub type Vec2D = euclid::default::Vector2D<f64>;
 
-#[derive(Copy, Clone, rand_derive::Rand)]
+#[derive(Copy, Clone)]
 pub enum DistanceType {
     Manhattan,
     Euclidean,
     Euclidean2,
     Chebyshev,
     MinXY,
+}
+
+impl Distribution<DistanceType> for Standard {
+    fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> DistanceType {
+        match rng.gen_range(0..5) {
+            0 => DistanceType::Manhattan,
+            1 => DistanceType::Euclidean,
+            2 => DistanceType::Euclidean2,
+            3 => DistanceType::Chebyshev,
+            _ => DistanceType::MinXY,
+        }
+    }
 }
 
 fn distance(distance_type: DistanceType, v: Vec2D) -> f64 {
@@ -46,8 +58,8 @@ impl Distribution<DistanceEntry> for DistanceEntryDistribution {
             rng.gen(),
             Vec2D::new(self.width as f64, self.height as f64),
             Vec2D::new(
-                rng.gen_range(0.0, self.width as f64),
-                rng.gen_range(0.0, self.height as f64),
+                rng.gen_range(0.0..self.width as f64),
+                rng.gen_range(0.0..self.height as f64),
             ),
             rng.gen(),
             rng.gen(),

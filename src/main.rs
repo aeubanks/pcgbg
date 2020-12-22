@@ -53,7 +53,7 @@ fn main() {
     for (i, dist_entry) in dist_entries.iter_mut().enumerate() {
         let mut color_ratios = vec![0.0; 3];
         let idx = i % color_ratios.len();
-        color_ratios[idx] = rng.gen_range(0.1, 1.0);
+        color_ratios[idx] = rng.gen_range(0.1..1.0);
         buf.add(dist_entry, &color_ratios);
     }
     buf.add(&noise_r, &[0.1, 0.0, 0.0]);

@@ -9,7 +9,6 @@ approx = "*"
 euclid = "*"
 noise = { version = "0.6", default-features = false }
 num-traits = "*"
-rand_derive = "*"
 structopt = "*"
 more-asserts = "*"
 ndarray = "*"
