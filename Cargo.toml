@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 approx = "*"
 euclid = "*"
-noise = { version = "0.6", default-features = false }
+noise = { version = "0.7", default-features = false }
 num-traits = "*"
 structopt = "*"
 more-asserts = "*"
