@@ -23,7 +23,8 @@ impl Distribution<DistanceType> for Standard {
             1 => DistanceType::Euclidean,
             2 => DistanceType::Euclidean2,
             3 => DistanceType::Chebyshev,
-            _ => DistanceType::MinXY,
+            4 => DistanceType::MinXY,
+            _ => unreachable!(),
         }
     }
 }
