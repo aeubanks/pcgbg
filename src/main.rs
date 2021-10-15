@@ -4,7 +4,6 @@ use more_asserts::assert_le;
 use pcgbg::pcgbg_buf::Buf;
 use pcgbg::pcgbg_dist::{DistanceEntry, DistanceEntryDistribution};
 use pcgbg::pcgbg_noise::NoiseDistribution;
-use rand::distributions::Distribution;
 use rand::rngs::SmallRng;
 use rand::Rng;
 use rand::SeedableRng;
@@ -39,14 +38,14 @@ fn main() {
     let mut rng = SmallRng::seed_from_u64(opts.seed.unwrap_or_else(|| rand::thread_rng().gen()));
 
     let noise_distribution = NoiseDistribution { scale };
-    let noise_r = noise_distribution.sample(&mut rng);
-    let noise_g = noise_distribution.sample(&mut rng);
-    let noise_b = noise_distribution.sample(&mut rng);
+    let noise_r = rng.sample(&noise_distribution);
+    let noise_g = rng.sample(&noise_distribution);
+    let noise_b = rng.sample(&noise_distribution);
 
     let mut dist_entries = Vec::<DistanceEntry>::new();
     let dist_entry_distribution = DistanceEntryDistribution { width, height };
     for _ in 0..6 {
-        dist_entries.push(dist_entry_distribution.sample(&mut rng));
+        dist_entries.push(rng.sample(&dist_entry_distribution));
     }
 
     let mut buf = Buf::new(width, height);
@@ -89,9 +88,9 @@ fn integration_test() {
     let mut rng = SmallRng::seed_from_u64(1);
 
     let noise_distribution = NoiseDistribution { scale };
-    let noise = noise_distribution.sample(&mut rng);
+    let noise = rng.sample(&noise_distribution);
     let dist_entry_distribution = DistanceEntryDistribution { width, height };
-    let dist_entry = dist_entry_distribution.sample(&mut rng);
+    let dist_entry = rng.sample(&dist_entry_distribution);
 
     let mut buf = Buf::new(width, height);
     buf.add(&noise, &[1.4, 0.1, 0.0]);
