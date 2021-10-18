@@ -2,6 +2,7 @@ use image::RgbImage;
 #[cfg(test)]
 use more_asserts::assert_le;
 use pcgbg::pcgbg_buf::Buf;
+use pcgbg::pcgbg_complex::ComplexEntryDistribution;
 use pcgbg::pcgbg_dist::{DistanceEntry, DistanceEntryDistribution};
 use pcgbg::pcgbg_noise::NoiseDistribution;
 use rand::rngs::SmallRng;
@@ -58,6 +59,13 @@ fn main() {
     buf.add(&noise_r, &[0.1, 0.0, 0.0]);
     buf.add(&noise_g, &[0.0, 0.1, 0.0]);
     buf.add(&noise_b, &[0.0, 0.0, 0.1]);
+    let complex_distribution = ComplexEntryDistribution { width, height };
+    let complex_r = rng.sample(&complex_distribution);
+    let complex_g = rng.sample(&complex_distribution);
+    let complex_b = rng.sample(&complex_distribution);
+    buf.add(&complex_r, &[0.5, 0.0, 0.0]);
+    buf.add(&complex_g, &[0.0, 0.5, 0.0]);
+    buf.add(&complex_b, &[0.0, 0.0, 0.5]);
     buf.normalize();
 
     let image = buf_to_image(&buf);
@@ -91,10 +99,13 @@ fn integration_test() {
     let noise = rng.sample(&noise_distribution);
     let dist_entry_distribution = DistanceEntryDistribution { width, height };
     let dist_entry = rng.sample(&dist_entry_distribution);
+    let complex_entry_distribution = ComplexEntryDistribution { width, height };
+    let complex_entry = rng.sample(&complex_entry_distribution);
 
     let mut buf = Buf::new(width, height);
     buf.add(&noise, &[1.4, 0.1, 0.0]);
     buf.add(&dist_entry, &[0.0, 0.1, 0.5]);
+    buf.add(&complex_entry, &[0.2, 0.3, 0.4]);
     buf.normalize();
 
     for y in 0..height {

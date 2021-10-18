@@ -23,6 +23,7 @@ version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "072df7202e63b127ab55acfe16ce97013d5b97bf160489336d3f1840fd78e99e"
 dependencies = [
+ "num-complex",
  "num-traits",
 ]
 
@@ -492,6 +493,7 @@ dependencies = [
  "ndarray",
  "noise",
  "noisy_float",
+ "num-complex",
  "num-traits",
  "rand 0.8.4",
  "structopt",
